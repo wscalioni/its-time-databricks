@@ -24,7 +24,7 @@
 
 # COMMAND ----------
 
-dbutils.widgets.text("catalog", "wscalioni_classic_catalog", "Catalog")
+dbutils.widgets.text("catalog", "main", "Catalog (set to your UC catalog)")
 dbutils.widgets.text("schema", "its_time", "Schema")
 dbutils.widgets.dropdown("source", "synthetic", ["synthetic", "table"], "Data source")
 dbutils.widgets.text("source_table", "", "Source table (if source=table): cat.sch.tbl")

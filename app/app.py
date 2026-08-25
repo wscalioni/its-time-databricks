@@ -1,8 +1,9 @@
 """It's TIME — Guided Study (Databricks App, Plotly Dash).
 
 A hand-holding, technical walkthrough of the *It's TIME* (ICML 2026) forecasting-benchmark
-methodology. Eight Prev/Next steps, each pairing a paper explanation with a live visual on the real
-tables in `wscalioni_classic_catalog.its_time`. The final step is the quantile forecast inspector.
+methodology. Eight Prev/Next steps, each pairing a paper explanation with a live visual on the tables
+produced by the notebooks (catalog/schema from ITS_TIME_CATALOG/ITS_TIME_SCHEMA env vars, default
+`main`). The final step is the quantile forecast inspector.
 """
 import os
 import functools
@@ -17,7 +18,7 @@ import dash_bootstrap_components as dbc
 from databricks.sdk.core import Config
 from databricks import sql
 
-CATALOG = os.getenv("ITS_TIME_CATALOG", "wscalioni_classic_catalog")
+CATALOG = os.getenv("ITS_TIME_CATALOG", "main")
 SCHEMA = os.getenv("ITS_TIME_SCHEMA", "its_time")
 WAREHOUSE_ID = os.getenv("DATABRICKS_WAREHOUSE_ID", "")
 SEASON = int(os.getenv("ITS_TIME_SEASON", "24"))

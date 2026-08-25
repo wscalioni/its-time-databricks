@@ -11,7 +11,8 @@ guided Databricks App. Everything runs on a **synthetic multi-pattern dataset wi
 each stage's output is checkable against ground truth; a one-line switch points it at real Unity Catalog
 tables instead.
 
-Built and verified in the `fevm-wscalioni-classic` workspace.
+Runs in any Unity Catalog workspace — catalog, schema, and SQL-warehouse id are all parameters
+(notebook widgets / app env vars), defaulting to the `main` catalog.
 
 ---
 

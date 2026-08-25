@@ -1,8 +1,8 @@
 # Deployment runbook
 
 All commands assume the Databricks CLI with a profile pointed at the target workspace
-(`--profile <PROFILE>`; the reference build used `wscalioni-classic`). Replace the catalog, schema,
-warehouse id, workspace user path, and GPU cluster id with your own.
+(`--profile <PROFILE>`). Replace the catalog, schema, warehouse id, workspace user path, and GPU
+cluster id with your own.
 
 ## Prerequisites
 

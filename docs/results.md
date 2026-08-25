@@ -1,7 +1,7 @@
 # Verified results
 
-Reference run: synthetic multi-pattern set, `H=24`, `W=3`, 5 models, in `fevm-wscalioni-classic`.
-All numbers are reproducible by re-running the two notebooks.
+Reference run: synthetic multi-pattern set, `H=24`, `W=3`, 5 models. All numbers are reproducible by
+re-running the two notebooks in any Unity Catalog workspace (set the `catalog`/`schema` widgets).
 
 ## Screening (Algorithms 1 & 2)
 

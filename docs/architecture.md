@@ -6,7 +6,7 @@
 |---|---|---|
 | Notebook 1 | Python on serverless (pandas, statsmodels, scipy) | screening + feature engineering |
 | Notebook 2 | Python on serverless + T4 GPU (chronos-forecasting, timesfm, databricks-sql-connector) | zero-shot bake-off + metrics |
-| Delta tables | Unity Catalog (`wscalioni_classic_catalog.its_time`) | all intermediate + result data |
+| Delta tables | Unity Catalog (`<catalog>.<schema>`) | all intermediate + result data |
 | SQL warehouse | serverless (PRO) | `ai_forecast()` execution + dashboard/app queries |
 | AI/BI dashboard | Lakeview | leaderboard + screening + feature summary |
 | Guided-study app | Databricks Apps (Plotly Dash) | 8-step methodology walkthrough + inspector |
@@ -38,7 +38,7 @@
                    (leaderboard/*)                             (predictions + clean_series)
 ```
 
-## Delta tables (`wscalioni_classic_catalog.its_time`)
+## Delta tables (`<catalog>.<schema>`)
 
 | Table | Grain | Key columns |
 |---|---|---|

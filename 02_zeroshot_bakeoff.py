@@ -26,13 +26,13 @@
 
 # COMMAND ----------
 
-dbutils.widgets.text("catalog", "wscalioni_classic_catalog", "Catalog")
+dbutils.widgets.text("catalog", "main", "Catalog (set to your UC catalog)")
 dbutils.widgets.text("schema", "its_time", "Schema")
 dbutils.widgets.text("horizon", "24", "Forecast horizon H (steps)")
 dbutils.widgets.text("n_windows", "3", "Rolling windows W")
 dbutils.widgets.text("season_period", "24", "Seasonal period (steps)")
 dbutils.widgets.text("frequency", "1 hour", "ai_forecast frequency string")
-dbutils.widgets.text("warehouse_id", "228e047e9ad5595e", "SQL warehouse id (for ai_forecast)")
+dbutils.widgets.text("warehouse_id", "", "SQL warehouse id (for ai_forecast; blank = skip ai_forecast)")
 dbutils.widgets.text("gpu_models", "", "GPU models (comma list): Chronos-2,TimesFM-2.5")
 
 CATALOG = dbutils.widgets.get("catalog")

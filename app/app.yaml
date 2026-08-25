@@ -5,7 +5,8 @@ command:
 env:
   - name: DATABRICKS_WAREHOUSE_ID
     valueFrom: sql-warehouse
+  # Set these to the Unity Catalog catalog/schema where the notebooks wrote their tables.
   - name: ITS_TIME_CATALOG
-    value: "wscalioni_classic_catalog"
+    value: "main"
   - name: ITS_TIME_SCHEMA
     value: "its_time"

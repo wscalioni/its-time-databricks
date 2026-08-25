@@ -1,0 +1,11 @@
+command:
+  - "python"
+  - "app.py"
+
+env:
+  - name: DATABRICKS_WAREHOUSE_ID
+    valueFrom: sql-warehouse
+  - name: ITS_TIME_CATALOG
+    value: "wscalioni_classic_catalog"
+  - name: ITS_TIME_SCHEMA
+    value: "its_time"

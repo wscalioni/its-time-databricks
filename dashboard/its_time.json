@@ -1,0 +1,234 @@
+{
+  "datasets": [
+    {
+      "name": "ds_kpi",
+      "displayName": "KPIs",
+      "queryLines": [
+        "SELECT\n",
+        "  (SELECT count(*) FROM quality_summary WHERE predictable) AS n_forecastable,\n",
+        "  (SELECT count(*) FROM quality_summary WHERE NOT predictable) AS n_rejected,\n",
+        "  (SELECT count(*) FROM leaderboard) AS n_models,\n",
+        "  (SELECT min(norm_mase_gmean) FROM leaderboard) AS best_mase\n"
+      ]
+    },
+    {
+      "name": "ds_leaderboard",
+      "displayName": "Leaderboard",
+      "queryLines": [
+        "SELECT model, norm_mase_gmean, norm_crps_gmean\n",
+        "FROM leaderboard\n",
+        "ORDER BY norm_mase_gmean\n"
+      ]
+    },
+    {
+      "name": "ds_pattern",
+      "displayName": "Pattern (Chronos-Bolt)",
+      "queryLines": [
+        "SELECT feature, CAST(`group` AS STRING) AS grp, norm_mase_gmean, n\n",
+        "FROM pattern_leaderboard\n",
+        "WHERE model = 'Chronos-Bolt'\n"
+      ]
+    },
+    {
+      "name": "ds_quality",
+      "displayName": "Screening",
+      "queryLines": [
+        "SELECT reason, count(*) AS n\n",
+        "FROM quality_summary\n",
+        "GROUP BY reason\n"
+      ]
+    },
+    {
+      "name": "ds_features",
+      "displayName": "Structural features",
+      "queryLines": [
+        "SELECT variate, F1_trend_strength, F2_trend_linearity, F3_seasonality_strength,\n",
+        "       F4_seasonality_correlation, F5_residual_acf1, F6_complexity, F7_stationarity, pattern_code\n",
+        "FROM variate_features\n",
+        "ORDER BY variate\n"
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "name": "overview",
+      "displayName": "Overview",
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1",
+      "layout": [
+        {
+          "widget": {
+            "name": "title",
+            "multilineTextboxSpec": {
+              "lines": ["# It's TIME — Zero-shot Forecasting Leaderboard\n"]
+            }
+          },
+          "position": {"x": 0, "y": 0, "width": 12, "height": 1}
+        },
+        {
+          "widget": {
+            "name": "subtitle",
+            "multilineTextboxSpec": {
+              "lines": [
+                "Reproduction of *It's TIME* (ICML 2026) on Databricks: series are screened for forecastability, characterised by structural features (F1–F7), then evaluated **zero-shot** with MASE + CRPS normalised against a Seasonal-Naive baseline (**< 1.0 beats the baseline**)."
+              ]
+            }
+          },
+          "position": {"x": 0, "y": 1, "width": 12, "height": 1}
+        },
+        {
+          "widget": {
+            "name": "kpi-forecastable",
+            "queries": [{"name": "q", "query": {"datasetName": "ds_kpi",
+              "fields": [{"name": "n_forecastable", "expression": "`n_forecastable`"}], "disaggregated": true}}],
+            "spec": {"version": 2, "widgetType": "counter",
+              "encodings": {"value": {"fieldName": "n_forecastable", "displayName": "Forecastable variates"}},
+              "frame": {"showTitle": true, "title": "Forecastable variates"}}
+          },
+          "position": {"x": 0, "y": 2, "width": 3, "height": 3}
+        },
+        {
+          "widget": {
+            "name": "kpi-rejected",
+            "queries": [{"name": "q", "query": {"datasetName": "ds_kpi",
+              "fields": [{"name": "n_rejected", "expression": "`n_rejected`"}], "disaggregated": true}}],
+            "spec": {"version": 2, "widgetType": "counter",
+              "encodings": {"value": {"fieldName": "n_rejected", "displayName": "Rejected (unforecastable)"}},
+              "frame": {"showTitle": true, "title": "Rejected by screening"}}
+          },
+          "position": {"x": 3, "y": 2, "width": 3, "height": 3}
+        },
+        {
+          "widget": {
+            "name": "kpi-models",
+            "queries": [{"name": "q", "query": {"datasetName": "ds_kpi",
+              "fields": [{"name": "n_models", "expression": "`n_models`"}], "disaggregated": true}}],
+            "spec": {"version": 2, "widgetType": "counter",
+              "encodings": {"value": {"fieldName": "n_models", "displayName": "Models evaluated"}},
+              "frame": {"showTitle": true, "title": "Models evaluated"}}
+          },
+          "position": {"x": 6, "y": 2, "width": 3, "height": 3}
+        },
+        {
+          "widget": {
+            "name": "kpi-best",
+            "queries": [{"name": "q", "query": {"datasetName": "ds_kpi",
+              "fields": [{"name": "best_mase", "expression": "`best_mase`"}], "disaggregated": true}}],
+            "spec": {"version": 2, "widgetType": "counter",
+              "encodings": {"value": {"fieldName": "best_mase", "displayName": "Best normalised MASE",
+                "format": {"type": "number", "decimalPlaces": {"type": "exact", "places": 3}}}},
+              "frame": {"showTitle": true, "title": "Best normalised MASE"}}
+          },
+          "position": {"x": 9, "y": 2, "width": 3, "height": 3}
+        },
+        {
+          "widget": {
+            "name": "hdr-leaderboard",
+            "multilineTextboxSpec": {"lines": ["## Model leaderboard\n"]}
+          },
+          "position": {"x": 0, "y": 5, "width": 12, "height": 1}
+        },
+        {
+          "widget": {
+            "name": "bar-leaderboard",
+            "queries": [{"name": "q", "query": {"datasetName": "ds_leaderboard",
+              "fields": [
+                {"name": "model", "expression": "`model`"},
+                {"name": "avg(norm_mase_gmean)", "expression": "AVG(`norm_mase_gmean`)"}
+              ], "disaggregated": false}}],
+            "spec": {"version": 3, "widgetType": "bar",
+              "encodings": {
+                "x": {"fieldName": "model", "scale": {"type": "categorical"}, "displayName": "Model"},
+                "y": {"fieldName": "avg(norm_mase_gmean)", "scale": {"type": "quantitative"}, "displayName": "Normalised MASE"},
+                "color": {"fieldName": "model", "scale": {"type": "categorical"}, "displayName": "Model"}
+              },
+              "frame": {"showTitle": true, "title": "Normalised MASE by model (lower = better; 1.0 = Seasonal-Naive)"}}
+          },
+          "position": {"x": 0, "y": 6, "width": 6, "height": 6}
+        },
+        {
+          "widget": {
+            "name": "bar-pattern",
+            "queries": [{"name": "q", "query": {"datasetName": "ds_pattern",
+              "fields": [
+                {"name": "feature", "expression": "`feature`"},
+                {"name": "grp", "expression": "`grp`"},
+                {"name": "avg(norm_mase_gmean)", "expression": "AVG(`norm_mase_gmean`)"}
+              ], "disaggregated": false}}],
+            "spec": {"version": 3, "widgetType": "bar",
+              "encodings": {
+                "x": {"fieldName": "feature", "scale": {"type": "categorical"}, "displayName": "Feature"},
+                "y": {"fieldName": "avg(norm_mase_gmean)", "scale": {"type": "quantitative"}, "displayName": "Normalised MASE"},
+                "color": {"fieldName": "grp", "scale": {"type": "categorical"}, "displayName": "Pattern present (1) / absent (0)"}
+              },
+              "frame": {"showTitle": true, "title": "Chronos-Bolt: where its edge lives (Fk=1 vs Fk=0)"}}
+          },
+          "position": {"x": 6, "y": 6, "width": 6, "height": 6}
+        },
+        {
+          "widget": {
+            "name": "hdr-screening",
+            "multilineTextboxSpec": {"lines": ["## Screening & series characterisation\n"]}
+          },
+          "position": {"x": 0, "y": 12, "width": 12, "height": 1}
+        },
+        {
+          "widget": {
+            "name": "pie-screening",
+            "queries": [{"name": "q", "query": {"datasetName": "ds_quality",
+              "fields": [
+                {"name": "reason", "expression": "`reason`"},
+                {"name": "sum(n)", "expression": "SUM(`n`)"}
+              ], "disaggregated": false}}],
+            "spec": {"version": 3, "widgetType": "pie",
+              "encodings": {
+                "angle": {"fieldName": "sum(n)", "scale": {"type": "quantitative"}, "displayName": "Variates"},
+                "color": {"fieldName": "reason", "scale": {"type": "categorical"}, "displayName": "Screening outcome"},
+                "label": {"show": true}
+              },
+              "frame": {"showTitle": true, "title": "Screening outcomes (ok / white_noise / constant_series)"}}
+          },
+          "position": {"x": 0, "y": 13, "width": 4, "height": 6}
+        },
+        {
+          "widget": {
+            "name": "tbl-features",
+            "queries": [{"name": "q", "query": {"datasetName": "ds_features",
+              "fields": [
+                {"name": "variate", "expression": "`variate`"},
+                {"name": "F1_trend_strength", "expression": "`F1_trend_strength`"},
+                {"name": "F3_seasonality_strength", "expression": "`F3_seasonality_strength`"},
+                {"name": "F5_residual_acf1", "expression": "`F5_residual_acf1`"},
+                {"name": "F6_complexity", "expression": "`F6_complexity`"},
+                {"name": "F7_stationarity", "expression": "`F7_stationarity`"},
+                {"name": "pattern_code", "expression": "`pattern_code`"}
+              ], "disaggregated": true}}],
+            "spec": {"version": 2, "widgetType": "table",
+              "encodings": {"columns": [
+                {"fieldName": "variate", "displayName": "Variate"},
+                {"fieldName": "F1_trend_strength", "displayName": "F1 Trend", "format": {"type": "number", "decimalPlaces": {"type": "exact", "places": 2}}},
+                {"fieldName": "F3_seasonality_strength", "displayName": "F3 Season", "format": {"type": "number", "decimalPlaces": {"type": "exact", "places": 2}}},
+                {"fieldName": "F5_residual_acf1", "displayName": "F5 ResACF1", "format": {"type": "number", "decimalPlaces": {"type": "exact", "places": 2}}},
+                {"fieldName": "F6_complexity", "displayName": "F6 Complexity", "format": {"type": "number", "decimalPlaces": {"type": "exact", "places": 2}}},
+                {"fieldName": "F7_stationarity", "displayName": "F7 Stationary"},
+                {"fieldName": "pattern_code", "displayName": "7-bit pattern"}
+              ]},
+              "frame": {"showTitle": true, "title": "Structural features & pattern codes"}}
+          },
+          "position": {"x": 4, "y": 13, "width": 8, "height": 6}
+        }
+      ]
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "canvasBackgroundColor": {"light": "#FCFCFC", "dark": "#1F272D"},
+      "widgetBackgroundColor": {"light": "#FFFFFF", "dark": "#11171C"},
+      "widgetBorderColor": {"light": "#FFFFFF", "dark": "#11171C"},
+      "fontColor": {"light": "#11171C", "dark": "#E8ECF0"},
+      "selectionColor": {"light": "#2272B4", "dark": "#8ACAFF"},
+      "visualizationColors": ["#2272B4", "#FFA600", "#DE5582", "#4E5185", "#99DDB4", "#1D425C", "#FF7054"],
+      "widgetHeaderAlignment": "LEFT"
+    }
+  }
+}
